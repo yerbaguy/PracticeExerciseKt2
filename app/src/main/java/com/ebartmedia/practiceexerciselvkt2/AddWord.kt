@@ -1,6 +1,5 @@
 package com.ebartmedia.practiceexerciselvkt2
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
@@ -26,25 +25,20 @@ import io.reactivex.functions.Action
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
+class AddWord : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
 
     private var compositeDisposable: CompositeDisposable?=null
     private var wordRepository: WordRepository?=null
 
-    private var word:Word?=null
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_add_word)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-
-
         compositeDisposable = CompositeDisposable()
+
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
@@ -62,12 +56,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.setNavigationItemSelectedListener(this)
 
 
-
         val wordDatabase = WordDatabase.getInstance(this)
         wordRepository = WordRepository.getInstance(WordDataSource.getInstance(wordDatabase.wordDAO()))
 
-
-          //  updateWord(word)
 
 
         button.setOnClickListener({
@@ -79,8 +70,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            eng = engword.toString()
 //            pl = plword.toString()
 
-              eng = engword.text.toString()
-              pl = plword.text.toString()
+            eng = engword.text.toString()
+            pl = plword.text.toString()
 
             Log.d("lkajsdf", "lkjsdf" + eng)
             Log.d("lkjsdf", "lkjsdf" + pl)
@@ -89,8 +80,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val disposable = Observable.create(ObservableOnSubscribe<Any> { e->
 
                 val word = Word()
-              //  word.engword = "lkajsdf"
-              //  word.plword = "lkjsdf"
+                //  word.engword = "lkajsdf"
+                //  word.plword = "lkjsdf"
 
                 word.engword = eng
                 word.plword = pl
@@ -124,6 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
 
+
     }
 
     override fun onBackPressed() {
@@ -137,7 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.add_word, menu)
         return true
     }
 
@@ -154,14 +146,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-
-            R.id.addword -> {
-
-                val intent = Intent(this, AddWord::class.java)
-
-                startActivity(intent)
-            }
-
             R.id.nav_home -> {
                 // Handle the camera action
             }
@@ -184,39 +168,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-
-    private fun updateWord(word:Word) {
-
-
-        val disposable = Observable.create(ObservableOnSubscribe<Any> { e->
-
-            val word = Word()
-            word.engword = "lkajsdf"
-            word.plword = "lkjsdf"
-
-            wordRepository!!.insertWord(word)
-            e.onComplete()
-
-        })
-
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(io.reactivex.functions.Consumer {
-
-            },
-
-                io.reactivex.functions.Consumer {
-
-                    throwable-> Toast.makeText(this, ""+throwable.message, Toast.LENGTH_SHORT).show()
-                },
-
-                Action {  } )
-
-                compositeDisposable!!.addAll(disposable)
-
-
-
     }
 }
